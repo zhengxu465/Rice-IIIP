@@ -172,7 +172,6 @@ def draw(canvas):
     card = Card("S", "A")
     card.draw(canvas, [300, 300])
 
-
 # initialization frame
 frame = simplegui.create_frame("Blackjack", 600, 600)
 frame.set_canvas_background("Green")
