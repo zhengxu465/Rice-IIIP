@@ -12,10 +12,13 @@ CARD_BACK_SIZE = (72, 96)
 CARD_BACK_CENTER = (36, 48)
 card_back = simplegui.load_image("http://storage.googleapis.com/codeskulptor-assets/card_jfitz_back.png")    
 
+
 # initialize some useful global variables
 in_play = False
 outcome = ""
 score = 0
+player_hand=[]
+dealer_hand=[]
 
 # define globals for cards
 SUITS = ('C', 'S', 'H', 'D')
@@ -79,7 +82,8 @@ class Hand:
         else:
             return sum
             # compute the value of the hand, see Blackjack video
-   
+    def draw(self, canvas, pos):
+        pass	# draw a hand on the canvas, use the draw method for cards        
  
         
 # define deck class 
@@ -102,34 +106,61 @@ class Deck:
         ans = ""
         for i in range(len(self.deck)):
             ans += str(self.deck[i])+" "
-        return "Deck contains" + ans
+        return "Deck contains " + ans
         # return a string representing the deck
 
 
 
 #define event handlers for buttons
 def deal():
-    global outcome, in_play
+    global outcome, in_play,player_hand, dealer_hand,deck
     player_hand = Hand()
     dealer_hand = Hand()
+    deck = Deck()
+    deck.shuffle()
     player_hand.add_card(deck.deal_card())
     dealer_hand.add_card(deck.deal_card())
-    outcome = "Player hand is " + player_hand+ " Dealer hand is " + dealer_hand
+    outcome = "Player hand is " + str(player_hand)+ " Dealer hand is " + str(dealer_hand)
     print outcome
     # your code goes here
     
     in_play = True
 
 def hit():
-    pass	# replace with your code below
- 
-    # if the hand is in play, hit the player
-   
+        # replace with your code below
+    global outcome, in_play,player_hand
+    player_hand.add_card(deck.deal_card())
+    if player_hand.get_value()<=21 and in_play==True:
+        
+        print "Player hand contains " + str(player_hand)
+        print "Score is "+ str(player_hand.get_value())
+    elif player_hand.get_value()>21:
+        in_play = False
+        
+        score = player_hand.get_value()
+        print "Player hand contains " + str(player_hand)
+        print "Score is " + str(score)
+        outcome = "You're busted!"
+        print outcome
+        
     # if busted, assign a message to outcome, update in_play and score
        
 def stand():
-    pass	# replace with your code below
-   
+    global outcome, in_play,dealer_hand,player_hand
+    in_play = True
+    while dealer_hand.get_value()<17:
+        dealer_hand.add_card(deck.deal_card())
+        print "Dealer hand contains " + str(dealer_hand)
+    if dealer_hand.get_value()>21:
+        in_play = False
+        outcome = "Dealer is busted!"
+        
+    else:
+        if player_hand.get_value()>dealer_hand.get_value():
+            outcome = "Player wins!"
+        else:
+            outcome = "Dealer wins!"
+    print outcome    
     # if hand is in play, repeatedly hit dealer until his hand has value 17 or more
 
     # assign a message to outcome, update in_play and score
