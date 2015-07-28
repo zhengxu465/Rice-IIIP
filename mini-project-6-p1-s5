@@ -125,7 +125,6 @@ def deal():
     deck.shuffle()
     player_hand.add_card(deck.deal_card())
     dealer_hand.add_card(deck.deal_card())
-    print "Player hand is " + str(player_hand)+ " Dealer hand is " + str(dealer_hand)
     outcome = "New Game!"
     # your code goes here
     
@@ -137,19 +136,13 @@ def hit():
     
     if in_play:
         player_hand.add_card(deck.deal_card())
-        outcome= "Hit or stand?"
     if player_hand.get_value()<=21 and in_play==True:
-        
-        print "Player hand contains " + str(player_hand)
-        print "Score is "+ str(player_hand.get_value())
+        outcome = "Hit or stand"
     elif player_hand.get_value()>21 and in_play==True:
-        in_play = False
-        
+        in_play = False  
         score = player_hand.get_value()
-        print "Player hand contains " + str(player_hand)
-        print "Score is " + str(score)
-        outcome = "You're busted!"
-        print outcome
+        outcome = "You're busted! Dealer wins!"
+        
         
     # if busted, assign a message to outcome, update in_play and score
        
@@ -161,8 +154,7 @@ def stand():
         in_play= False
     while dealer_hand.get_value()<17 and in_play:
         dealer_hand.add_card(deck.deal_card())
-        print "Dealer hand contains " + str(dealer_hand)
-        print "Score is " + str(dealer_hand.get_value())
+        
     if dealer_hand.get_value()>21 and in_play:
         in_play = False
         outcome = "Dealer is busted! Player wins."
@@ -170,9 +162,10 @@ def stand():
     else:
         if player_hand.get_value()>dealer_hand.get_value() and in_play:
             outcome = "Player wins!"
+            in_play = False
         else:
-            outcome = "Dealer wins!"
-    print outcome    
+            outcome = "Dealer wins!"  
+            in_play = False
     # if hand is in play, repeatedly hit dealer until his hand has value 17 or more
 
     # assign a message to outcome, update in_play and score
@@ -181,6 +174,7 @@ def stand():
 def draw(canvas):
     # test to make sure that card.draw works, replace with your code below
     global outcome
+    
     canvas.draw_polygon([[200, 0], [400, 0], [400, 55], [200, 55]], 3, 'Yellow', 'Black')
     canvas.draw_text("Blackjack", (200, 40), 50, 'White')
     canvas.draw_text(outcome, (250, 500), 20, 'White')
@@ -189,6 +183,10 @@ def draw(canvas):
     
     player_hand.draw(canvas,[0,100])
     dealer_hand.draw(canvas,[0,300])
+    if in_play:
+        card_back_loc = (CARD_BACK_CENTER[0],CARD_BACK_CENTER[1])
+        canvas.draw_image(card_back, card_back_loc, CARD_BACK_SIZE, [0 + CARD_BACK_CENTER[0], 300 + CARD_BACK_CENTER[1]], CARD_BACK_SIZE)
+     
 
 
 # initialization frame
