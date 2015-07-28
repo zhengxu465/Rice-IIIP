@@ -83,7 +83,12 @@ class Hand:
             return sum
             # compute the value of the hand, see Blackjack video
     def draw(self, canvas, pos):
-        pass	# draw a hand on the canvas, use the draw method for cards        
+        i = 0
+        for c in self.hand:
+            c.draw(canvas,[pos[0]+72*i,pos[1]])
+            i+=1
+            
+            
  
         
 # define deck class 
@@ -120,8 +125,8 @@ def deal():
     deck.shuffle()
     player_hand.add_card(deck.deal_card())
     dealer_hand.add_card(deck.deal_card())
-    outcome = "Player hand is " + str(player_hand)+ " Dealer hand is " + str(dealer_hand)
-    print outcome
+    print "Player hand is " + str(player_hand)+ " Dealer hand is " + str(dealer_hand)
+    outcome = "New Game!"
     # your code goes here
     
     in_play = True
@@ -129,12 +134,15 @@ def deal():
 def hit():
         # replace with your code below
     global outcome, in_play,player_hand
-    player_hand.add_card(deck.deal_card())
+    
+    if in_play:
+        player_hand.add_card(deck.deal_card())
+        outcome= "Hit or stand?"
     if player_hand.get_value()<=21 and in_play==True:
         
         print "Player hand contains " + str(player_hand)
         print "Score is "+ str(player_hand.get_value())
-    elif player_hand.get_value()>21:
+    elif player_hand.get_value()>21 and in_play==True:
         in_play = False
         
         score = player_hand.get_value()
@@ -148,15 +156,19 @@ def hit():
 def stand():
     global outcome, in_play,dealer_hand,player_hand
     in_play = True
-    while dealer_hand.get_value()<17:
+    if player_hand.get_value()>21:
+        outcome = "Player is busted"
+        in_play= False
+    while dealer_hand.get_value()<17 and in_play:
         dealer_hand.add_card(deck.deal_card())
         print "Dealer hand contains " + str(dealer_hand)
-    if dealer_hand.get_value()>21:
+        print "Score is " + str(dealer_hand.get_value())
+    if dealer_hand.get_value()>21 and in_play:
         in_play = False
-        outcome = "Dealer is busted!"
+        outcome = "Dealer is busted! Player wins."
         
     else:
-        if player_hand.get_value()>dealer_hand.get_value():
+        if player_hand.get_value()>dealer_hand.get_value() and in_play:
             outcome = "Player wins!"
         else:
             outcome = "Dealer wins!"
@@ -168,9 +180,16 @@ def stand():
 # draw handler    
 def draw(canvas):
     # test to make sure that card.draw works, replace with your code below
+    global outcome
+    canvas.draw_polygon([[200, 0], [400, 0], [400, 55], [200, 55]], 3, 'Yellow', 'Black')
+    canvas.draw_text("Blackjack", (200, 40), 50, 'White')
+    canvas.draw_text(outcome, (250, 500), 20, 'White')
+    canvas.draw_text("Player "+"| "+"Score is " + str(player_hand.get_value()), (0, 80), 20, 'White')
+    canvas.draw_text("Dealer "+"| "+"Score is " + str(dealer_hand.get_value()), (0, 280), 20, 'White')
     
-    card = Card("S", "A")
-    card.draw(canvas, [300, 300])
+    player_hand.draw(canvas,[0,100])
+    dealer_hand.draw(canvas,[0,300])
+
 
 # initialization frame
 frame = simplegui.create_frame("Blackjack", 600, 600)
